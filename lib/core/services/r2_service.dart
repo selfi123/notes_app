@@ -1,75 +1,113 @@
+import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:minio/minio.dart';
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 class R2Service {
-  static Minio? _client;
+  // Points to your secure PythonAnywhere backend
+  static String get _apiUrl => dotenv.env['BACKEND_API_URL'] ?? 'https://yourusername.pythonanywhere.com';
+  
+  // The secret key must match the Python backend API_SECRET_KEY
+  static String get _apiKey => dotenv.env['API_SECRET_KEY'] ?? 'voicecard-secure-api-key-2026';
 
-  static Minio get client {
-    _client ??= Minio(
-      endPoint:
-          '${dotenv.env['R2_ACCOUNT_ID']}.r2.cloudflarestorage.com',
-      accessKey: dotenv.env['R2_ACCESS_KEY_ID'] ?? '',
-      secretKey: dotenv.env['R2_SECRET_ACCESS_KEY'] ?? '',
-      useSSL: true,
-      port: 443,
-    );
-    return _client!;
-  }
+  static Map<String, String> get _headers => {
+        'x-api-key': _apiKey,
+        'Content-Type': 'application/json',
+      };
 
-  static String get _bucket => dotenv.env['R2_BUCKET_NAME'] ?? 'notes';
-
-  /// Upload an audio file to R2. Returns the object key on success.
+  /// Upload an audio file securely via a backend Pre-signed URL.
   static Future<String> uploadAudio({
     required String localPath,
     required String objectKey,
   }) async {
-    final file = File(localPath);
-    // minio v3 requires Stream<Uint8List>
-    final stream = file.openRead().cast<Uint8List>();
-
-    await client.putObject(
-      _bucket,
-      objectKey,
-      stream,
+    // 1. Get Pre-signed PUT URL from our secure backend
+    final response = await http.get(
+      Uri.parse('\$_apiUrl/generate-upload-url?key=\$objectKey'),
+      headers: _headers,
     );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get upload URL: \${response.body}');
+    }
+
+    final data = jsonDecode(response.body);
+    final String presignedUrl = data['url'];
+
+    // 2. Upload file directly to Cloudflare R2
+    final file = File(localPath);
+    final fileBytes = await file.readAsBytes();
+
+    final uploadResponse = await http.put(
+      Uri.parse(presignedUrl),
+      body: fileBytes,
+      headers: {
+        'Content-Type': 'audio/mp4', // Ensure standard MIME type for M4A
+      },
+    );
+
+    if (uploadResponse.statusCode != 200) {
+      throw Exception('Failed to upload directly to R2: \${uploadResponse.statusCode}');
+    }
 
     return objectKey;
   }
 
-  /// Download an audio file from R2 to local cache. Returns local path.
+  /// Download an audio file securely via a backend Pre-signed URL.
   static Future<String> downloadAudio({
     required String objectKey,
   }) async {
     final cacheDir = await getTemporaryDirectory();
     final fileName = objectKey.split('/').last;
-    final localPath = '${cacheDir.path}/$fileName';
+    final localPath = '\${cacheDir.path}/\$fileName';
 
     final localFile = File(localPath);
     if (await localFile.exists()) {
       return localPath; // Already cached
     }
 
-    final stream = await client.getObject(_bucket, objectKey);
-    final sink = localFile.openWrite();
-    await stream.pipe(sink);
-    await sink.close();
+    // 1. Get Pre-signed GET URL from our secure backend
+    final response = await http.get(
+      Uri.parse('\$_apiUrl/generate-download-url?key=\$objectKey'),
+      headers: _headers,
+    );
 
+    if (response.statusCode != 200) {
+      throw Exception('Failed to get download URL: \${response.body}');
+    }
+
+    final data = jsonDecode(response.body);
+    final String presignedUrl = data['url'];
+
+    // 2. Download file directly from Cloudflare R2
+    final downloadResponse = await http.get(Uri.parse(presignedUrl));
+    
+    if (downloadResponse.statusCode != 200) {
+      throw Exception('Failed to download from R2: \${downloadResponse.statusCode}');
+    }
+
+    await localFile.writeAsBytes(downloadResponse.bodyBytes);
     return localPath;
   }
 
-  /// Delete an audio file from R2.
+  /// Delete an audio file securely via backend command.
   static Future<void> deleteAudio(String objectKey) async {
-    await client.removeObject(_bucket, objectKey);
+    final response = await http.post(
+      Uri.parse('\$_apiUrl/delete-audio'),
+      headers: _headers,
+      body: jsonEncode({'key': objectKey}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete audio: \${response.body}');
+    }
   }
 
-  /// Generate an R2 object key for a note.
+  /// Generate a unique object key for a note.
   static String buildKey({
     required String contactId,
     required String noteId,
   }) {
-    return 'audio/$contactId/$noteId.m4a';
+    return 'audio/\$contactId/\$noteId.m4a';
   }
 }

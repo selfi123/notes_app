@@ -36,9 +36,8 @@ dependencies:
   # Contacts
   flutter_contacts: ^1.1.9+2
 
-  # Cloud (Cloudflare R2 via S3-compatible)
-  minio: ^3.0.2
-
+  # Cloud (Backend API integration)
+  http: ^1.2.0
   # Payments
 
   # Environment variables
