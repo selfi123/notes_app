@@ -1,0 +1,373 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+
+import '../../../core/theme/app_theme.dart';
+import '../../../core/providers/providers.dart';
+import '../../../core/services/auth_service.dart';
+import '../../../core/services/iap_service.dart';
+
+class PremiumScreen extends ConsumerStatefulWidget {
+  const PremiumScreen({super.key});
+
+  @override
+  ConsumerState<PremiumScreen> createState() => _PremiumScreenState();
+}
+
+class _PremiumScreenState extends ConsumerState<PremiumScreen> {
+  bool _monthly = true;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  void _signInAndSubscribe(List<ProductDetails> products) async {
+    final user = AuthService.currentUser;
+    if (user == null) {
+      final credential = await AuthService.signInWithGoogle();
+      if (credential == null) {
+        _showSnack('Sign in canceled.');
+        return;
+      }
+    }
+
+    if (products.isEmpty) {
+      _showSnack('Products not available.');
+      return;
+    }
+
+    final targetId = _monthly ? IapService.monthlyProductId : IapService.yearlyProductId;
+    final product = products.firstWhere(
+      (p) => p.id == targetId,
+      orElse: () => products.first,
+    );
+
+    IapService.buyProduct(product);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Check real-time premium status
+    final userDoc = ref.watch(userDocProvider).value;
+    final isPremium = userDoc != null && userDoc.exists && userDoc.data()?['isPremium'] == true;
+
+    if (isPremium || ref.watch(settingsProvider).isActivePremium) {
+      return _buildAlreadyPremium(context);
+    }
+
+    final productsAsync = ref.watch(iapProductsProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Back button
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => context.pop(),
+                  child: Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: Icon(PhosphorIcons.x(PhosphorIconsStyle.light),
+                        color: AppColors.textPrimary, size: 18),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                child: Column(
+                  children: [
+                    // Amber glow orb
+                    Container(
+                      width: 80,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.amberDim.withValues(alpha: 0.3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.amber.withValues(alpha: 0.25),
+                            blurRadius: 40,
+                            spreadRadius: 10,
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        PhosphorIcons.crown(PhosphorIconsStyle.fill),
+                        size: 36,
+                        color: AppColors.amber,
+                      ),
+                    )
+                        .animate(onPlay: (c) => c.repeat(reverse: true))
+                        .scale(
+                          begin: const Offset(1.0, 1.0),
+                          end: const Offset(1.06, 1.06),
+                          duration: 2000.ms,
+                          curve: Curves.easeInOut,
+                        ),
+                    const SizedBox(height: 24),
+                    Text(
+                      'Voicecard Premium',
+                      style: Theme.of(context).textTheme.displayLarge,
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 100.ms),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Your notes. Everywhere.',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 150.ms),
+                    const SizedBox(height: 36),
+
+                    // Features
+                    ..._features.asMap().entries.map((e) => _FeatureRow(
+                          icon: e.value.$1,
+                          label: e.value.$2,
+                          index: e.key,
+                        )),
+                    const SizedBox(height: 36),
+
+                    // Billing toggle
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.border),
+                      ),
+                      child: Row(
+                        children: [
+                          _BillingTab(
+                            label: 'Monthly',
+                            price: '₹99 / mo',
+                            selected: _monthly,
+                            onTap: () => setState(() => _monthly = true),
+                          ),
+                          _BillingTab(
+                            label: 'Yearly',
+                            price: '₹799 / yr',
+                            badge: 'Save 33%',
+                            selected: !_monthly,
+                            onTap: () => setState(() => _monthly = false),
+                          ),
+                        ],
+                      ),
+                    ).animate().fadeIn(delay: 400.ms),
+                    const SizedBox(height: 16),
+
+                    // CTA
+                    SizedBox(
+                      width: double.infinity,
+                      child: productsAsync.when(
+                        data: (products) => FilledButton(
+                          onPressed: () => _signInAndSubscribe(products),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.amber,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14)),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                          ),
+                          child: Text(
+                            _monthly
+                                ? 'Start Premium — ₹99/mo' // Replace with product.price later
+                                : 'Start Premium — ₹799/yr',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelLarge
+                                ?.copyWith(color: Colors.white, fontSize: 15),
+                          ),
+                        ),
+                        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.amber)),
+                        error: (err, stack) => Text('Error loading products: $err', style: TextStyle(color: Colors.red)),
+                      ),
+                    ).animate().fadeIn(delay: 500.ms),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Cancel anytime. No questions asked.',
+                      style: Theme.of(context).textTheme.bodySmall,
+                      textAlign: TextAlign.center,
+                    ).animate().fadeIn(delay: 550.ms),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlreadyPremium(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(PhosphorIcons.crown(PhosphorIconsStyle.fill),
+                    size: 64, color: AppColors.amber),
+                const SizedBox(height: 16),
+                Text('You\'re Premium!',
+                    style: Theme.of(context).textTheme.displayLarge,
+                    textAlign: TextAlign.center),
+                const SizedBox(height: 8),
+                Text('Enjoy unlimited notes and cloud sync.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center),
+                const SizedBox(height: 32),
+                FilledButton(
+                  onPressed: () => context.pop(),
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.amber,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 14),
+                  ),
+                  child: const Text('Back'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static final _features = [
+    (PhosphorIcons.infinity(PhosphorIconsStyle.light), 'Unlimited notes'),
+    (PhosphorIcons.cloudArrowUp(PhosphorIconsStyle.light), 'Secure cloud backup'),
+    (PhosphorIcons.devices(PhosphorIconsStyle.light), 'Multi-device access'),
+    (PhosphorIcons.headset(PhosphorIconsStyle.light), 'Priority support'),
+  ];
+}
+
+class _FeatureRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final int index;
+
+  const _FeatureRow({required this.icon, required this.label, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        children: [
+          Container(
+            width: 38,
+            height: 38,
+            decoration: BoxDecoration(
+              color: AppColors.amber.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, size: 18, color: AppColors.amber),
+          ),
+          const SizedBox(width: 14),
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
+        ],
+      )
+          .animate(delay: Duration(milliseconds: 200 + 80 * index))
+          .fadeIn()
+          .slideX(begin: -0.08),
+    );
+  }
+}
+
+class _BillingTab extends StatelessWidget {
+  final String label;
+  final String price;
+  final String? badge;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _BillingTab({
+    required this.label,
+    required this.price,
+    this.badge,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.amber.withValues(alpha: 0.12) : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(label,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: selected
+                                ? AppColors.amber
+                                : AppColors.textSecondary,
+                          )),
+                  if (badge != null) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppColors.amber.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(badge!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(color: AppColors.amber)),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(price,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: selected
+                            ? AppColors.amberLight
+                            : AppColors.textMuted,
+                      )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
