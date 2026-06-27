@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:214063005994:android:e684527ad48bca7b469e53",
+        "android_client_info": {
+          "package_name": "com.krpdev.voicecard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "214063005994-ui2001bs7h0mpg1vgu33bquv4s4is4ft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2t-SJn-DiEMu-ZCS1LFIWbqrlmSVoJZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "214063005994-ui2001bs7h0mpg1vgu33bquv4s4is4ft.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:214063005994:android:5d3ff280d906d7f5469e53",
         "android_client_info": {
           "package_name": "com.voicecard.voicecard"

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -100,7 +100,9 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
           _showSnack('Please write something first');
           return;
         }
-        await ref.read(notesProvider.notifier).addTextNote(
+        await ref
+            .read(notesProvider.notifier)
+            .addTextNote(
               contactId: widget.contactId,
               contactName: widget.contactName,
               text: text,
@@ -110,7 +112,9 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
           _showSnack('Please record something first');
           return;
         }
-        await ref.read(notesProvider.notifier).addAudioNote(
+        await ref
+            .read(notesProvider.notifier)
+            .addAudioNote(
               contactId: widget.contactId,
               contactName: widget.contactName,
               audioPath: _recordedPath!,
@@ -125,9 +129,7 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
   }
 
   void _showSnack(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(msg)),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   String _formatTime(int seconds) {
@@ -174,17 +176,14 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
                 border: Border.all(color: AppColors.border),
               ),
               child: Icon(
-                PhosphorIcons.x(PhosphorIconsStyle.light),
+                PhosphorIconsLight.x,
                 color: AppColors.textPrimary,
                 size: 18,
               ),
             ),
           ),
           const SizedBox(width: 16),
-          Text(
-            'New Note',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          Text('New Note', style: Theme.of(context).textTheme.headlineMedium),
         ],
       ),
     );
@@ -205,15 +204,17 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(PhosphorIcons.user(PhosphorIconsStyle.fill),
-                  size: 13, color: AppColors.amber),
+              Icon(
+                PhosphorIconsFill.user,
+                size: 13,
+                color: AppColors.amber,
+              ),
               const SizedBox(width: 6),
               Text(
                 widget.contactName,
-                style: Theme.of(context)
-                    .textTheme
-                    .labelSmall
-                    ?.copyWith(color: AppColors.amberLight),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall?.copyWith(color: AppColors.amberLight),
               ),
             ],
           ),
@@ -234,21 +235,17 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
         child: Row(
           children: [
             _ModeTab(
-              icon: PhosphorIcons.microphone(
-                _mode == _NoteMode.audio
-                    ? PhosphorIconsStyle.fill
-                    : PhosphorIconsStyle.light,
-              ),
+              icon: _mode == _NoteMode.audio
+                    ? PhosphorIconsFill.microphone
+                    : PhosphorIconsLight.microphone,
               label: 'Voice',
               selected: _mode == _NoteMode.audio,
               onTap: () => setState(() => _mode = _NoteMode.audio),
             ),
             _ModeTab(
-              icon: PhosphorIcons.textT(
-                _mode == _NoteMode.text
-                    ? PhosphorIconsStyle.fill
-                    : PhosphorIconsStyle.light,
-              ),
+              icon: _mode == _NoteMode.text
+                    ? PhosphorIconsFill.textT
+                    : PhosphorIconsLight.textT,
               label: 'Text',
               selected: _mode == _NoteMode.text,
               onTap: () => setState(() => _mode = _NoteMode.text),
@@ -280,7 +277,9 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
                   height: height,
                   decoration: BoxDecoration(
                     color: _isRecording
-                        ? AppColors.amber.withValues(alpha: 0.6 + _amplitudeHistory[i] * 0.4)
+                        ? AppColors.amber.withValues(
+                            alpha: 0.6 + _amplitudeHistory[i] * 0.4,
+                          )
                         : AppColors.textMuted,
                     borderRadius: BorderRadius.circular(2),
                   ),
@@ -294,63 +293,66 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
           Text(
             _formatTime(_recordingSeconds),
             style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                  color: _isRecording ? AppColors.amber : AppColors.textSecondary,
-                  fontFeatures: [const FontFeature.tabularFigures()],
-                ),
+              color: _isRecording ? AppColors.amber : AppColors.textSecondary,
+              fontFeatures: [const FontFeature.tabularFigures()],
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             _isRecording
                 ? 'Recording...'
                 : _hasRecording
-                    ? 'Recording saved — tap Save to confirm'
-                    : 'Tap to start recording',
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: AppColors.textSecondary),
+                ? 'Recording saved — tap Save to confirm'
+                : 'Tap to start recording',
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 40),
 
           // Record button
           GestureDetector(
-            onTap: _isRecording ? _stopRecording : _startRecording,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _isRecording
-                    ? AppColors.error.withValues(alpha: 0.15)
-                    : AppColors.amber.withValues(alpha: 0.15),
-                border: Border.all(
-                  color: _isRecording ? AppColors.error : AppColors.amber,
-                  width: 2,
-                ),
-              ),
-              child: Center(
+                onTap: _isRecording ? _stopRecording : _startRecording,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: _isRecording ? 28 : 48,
-                  height: _isRecording ? 28 : 48,
+                  width: 80,
+                  height: 80,
                   decoration: BoxDecoration(
-                    shape:
-                        _isRecording ? BoxShape.rectangle : BoxShape.circle,
-                    borderRadius:
-                        _isRecording ? BorderRadius.circular(6) : null,
-                    color: _isRecording ? AppColors.error : AppColors.amber,
+                    shape: BoxShape.circle,
+                    color: _isRecording
+                        ? AppColors.error.withValues(alpha: 0.15)
+                        : AppColors.amber.withValues(alpha: 0.15),
+                    border: Border.all(
+                      color: _isRecording ? AppColors.error : AppColors.amber,
+                      width: 2,
+                    ),
+                  ),
+                  child: Center(
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: _isRecording ? 28 : 48,
+                      height: _isRecording ? 28 : 48,
+                      decoration: BoxDecoration(
+                        shape: _isRecording
+                            ? BoxShape.rectangle
+                            : BoxShape.circle,
+                        borderRadius: _isRecording
+                            ? BorderRadius.circular(6)
+                            : null,
+                        color: _isRecording ? AppColors.error : AppColors.amber,
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          )
+              )
               .animate(
                 onPlay: _isRecording ? (c) => c.repeat(reverse: true) : null,
               )
               .scale(
                 begin: const Offset(1.0, 1.0),
-                end: _isRecording ? const Offset(1.06, 1.06) : const Offset(1.0, 1.0),
+                end: _isRecording
+                    ? const Offset(1.06, 1.06)
+                    : const Offset(1.0, 1.0),
                 duration: 600.ms,
                 curve: Curves.easeInOut,
               ),
@@ -396,8 +398,9 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
             backgroundColor: AppColors.amber,
             foregroundColor: Colors.white,
             disabledBackgroundColor: AppColors.amberDim,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(14),
+            ),
             padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           child: _saving
@@ -405,14 +408,15 @@ class _AddNoteScreenState extends ConsumerState<AddNoteScreen> {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Text(
                   'Save Note',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelLarge
-                      ?.copyWith(color: Colors.white),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(color: Colors.white),
                 ),
         ),
       ),
@@ -442,22 +446,25 @@ class _ModeTab extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: selected ? AppColors.amber.withValues(alpha: 0.12) : Colors.transparent,
+            color: selected
+                ? AppColors.amber.withValues(alpha: 0.12)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon,
-                  size: 16,
-                  color: selected ? AppColors.amber : AppColors.textMuted),
+              Icon(
+                icon,
+                size: 16,
+                color: selected ? AppColors.amber : AppColors.textMuted,
+              ),
               const SizedBox(width: 6),
               Text(
                 label,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color:
-                          selected ? AppColors.amber : AppColors.textMuted,
-                    ),
+                  color: selected ? AppColors.amber : AppColors.textMuted,
+                ),
               ),
             ],
           ),

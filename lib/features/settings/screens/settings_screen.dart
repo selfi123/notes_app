@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -40,13 +40,18 @@ class SettingsScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: AppColors.border),
                       ),
-                      child: Icon(PhosphorIcons.caretLeft(PhosphorIconsStyle.light),
-                          color: AppColors.textPrimary, size: 18),
+                      child: Icon(
+                        PhosphorIconsLight.caretLeft,
+                        color: AppColors.textPrimary,
+                        size: 18,
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text('Settings',
-                      style: Theme.of(context).textTheme.headlineLarge),
+                  Text(
+                    'Settings',
+                    style: Theme.of(context).textTheme.headlineLarge,
+                  ),
                 ],
               ),
             ),
@@ -57,16 +62,18 @@ class SettingsScreen extends ConsumerWidget {
                   // Account section
                   _SectionLabel('ACCOUNT'),
                   _SettingsTile(
-                    icon: PhosphorIcons.crown(settings.isActivePremium
-                        ? PhosphorIconsStyle.fill
-                        : PhosphorIconsStyle.light),
+                    icon: settings.isActivePremium
+                          ? PhosphorIconsFill.crown
+                          : PhosphorIconsLight.crown,
                     iconColor: settings.isActivePremium
                         ? AppColors.amber
                         : AppColors.textMuted,
                     title: 'Subscription',
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 4),
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
                       decoration: BoxDecoration(
                         color: settings.isActivePremium
                             ? AppColors.amber.withValues(alpha: 0.15)
@@ -76,23 +83,22 @@ class SettingsScreen extends ConsumerWidget {
                       child: Text(
                         settings.isActivePremium ? 'Premium' : 'Free',
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                              color: settings.isActivePremium
-                                  ? AppColors.amber
-                                  : AppColors.textSecondary,
-                            ),
+                          color: settings.isActivePremium
+                              ? AppColors.amber
+                              : AppColors.textSecondary,
+                        ),
                       ),
                     ),
                     onTap: () => context.pushNamed('premium'),
                   ),
                   _SettingsTile(
-                    icon: PhosphorIcons.database(PhosphorIconsStyle.light),
+                    icon: PhosphorIconsLight.database,
                     title: 'Notes stored',
                     trailing: Text(
                       '${notes.length}${settings.isActivePremium ? '' : ' / 50'}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: AppColors.textSecondary),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
 
@@ -100,11 +106,11 @@ class SettingsScreen extends ConsumerWidget {
                   // Sync section
                   _SectionLabel('CLOUD SYNC'),
                   _SettingsTile(
-                    icon: PhosphorIcons.cloud(PhosphorIconsStyle.light),
+                    icon: PhosphorIconsLight.cloud,
                     title: 'Cloud backup',
                     trailing: settings.isActivePremium
                         ? Icon(
-                            PhosphorIcons.checkCircle(PhosphorIconsStyle.fill),
+                            PhosphorIconsFill.checkCircle,
                             color: AppColors.success,
                             size: 18,
                           )
@@ -115,23 +121,22 @@ class SettingsScreen extends ConsumerWidget {
                               minimumSize: Size.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            child: Text('Upgrade',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(color: AppColors.amber)),
+                            child: Text(
+                              'Upgrade',
+                              style: Theme.of(context).textTheme.bodyMedium
+                                  ?.copyWith(color: AppColors.amber),
+                            ),
                           ),
                   ),
                   if (settings.isActivePremium)
                     _SettingsTile(
-                      icon: PhosphorIcons.arrowClockwise(PhosphorIconsStyle.light),
+                      icon: PhosphorIconsLight.arrowClockwise,
                       title: 'Last synced',
                       trailing: Text(
                         lastSync,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: AppColors.textSecondary),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ),
 
@@ -139,12 +144,14 @@ class SettingsScreen extends ConsumerWidget {
                   // Preferences
                   _SectionLabel('PREFERENCES'),
                   _SettingsTile(
-                    icon: PhosphorIcons.folders(PhosphorIconsStyle.light),
+                    icon: PhosphorIconsLight.folders,
                     title: 'Group notes by contact',
                     trailing: Switch(
                       value: settings.useFolderLayout,
                       onChanged: (val) {
-                        ref.read(settingsProvider.notifier).toggleFolderLayout(val);
+                        ref
+                            .read(settingsProvider.notifier)
+                            .toggleFolderLayout(val);
                       },
                       activeThumbColor: AppColors.amber,
                       activeTrackColor: AppColors.amber.withValues(alpha: 0.3),
@@ -155,16 +162,17 @@ class SettingsScreen extends ConsumerWidget {
                   // About
                   _SectionLabel('ABOUT'),
                   _SettingsTile(
-                    icon: PhosphorIcons.info(PhosphorIconsStyle.light),
+                    icon: PhosphorIconsLight.info,
                     title: 'Version',
-                    trailing: Text('1.0.0',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: AppColors.textMuted)),
+                    trailing: Text(
+                      '1.0.0',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textMuted,
+                      ),
+                    ),
                   ),
                   _SettingsTile(
-                    icon: PhosphorIcons.shieldCheck(PhosphorIconsStyle.light),
+                    icon: PhosphorIconsLight.shieldCheck,
                     title: 'Privacy Policy',
                     onTap: () {},
                   ),
@@ -189,9 +197,9 @@ class _SectionLabel extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.amber,
-              letterSpacing: 1.2,
-            ),
+          color: AppColors.amber,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
@@ -227,19 +235,27 @@ class _SettingsTile extends StatelessWidget {
             Icon(icon, size: 18, color: iconColor ?? AppColors.textSecondary),
             const SizedBox(width: 14),
             Expanded(
-              child: Text(title,
-                  style: Theme.of(context).textTheme.titleMedium),
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
             ),
             if (trailing != null) ...[
               trailing!,
               if (onTap != null) ...[
                 const SizedBox(width: 8),
-                Icon(PhosphorIcons.caretRight(PhosphorIconsStyle.light),
-                    size: 14, color: AppColors.textMuted),
+                Icon(
+                  PhosphorIconsLight.caretRight,
+                  size: 14,
+                  color: AppColors.textMuted,
+                ),
               ],
             ] else if (onTap != null)
-              Icon(PhosphorIcons.caretRight(PhosphorIconsStyle.light),
-                  size: 14, color: AppColors.textMuted),
+              Icon(
+                PhosphorIconsLight.caretRight,
+                size: 14,
+                color: AppColors.textMuted,
+              ),
           ],
         ),
       ),
