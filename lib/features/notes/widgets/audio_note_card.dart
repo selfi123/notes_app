@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
@@ -99,184 +99,239 @@ class _AudioNoteCardState extends State<AudioNoteCard> {
       direction: DismissDirection.endToStart,
       background: _buildSwipeBackground(),
       onDismissed: (_) => widget.onDelete(),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.amber.withValues(alpha: 0.04),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header row
-              Row(
-                children: [
-                  Container(
-                    width: 34,
-                    height: 34,
-                    decoration: BoxDecoration(
-                      color: AppColors.amber.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(10),
+      child:
+          Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.amber.withValues(alpha: 0.04),
+                      blurRadius: 20,
+                      offset: const Offset(0, 4),
                     ),
-                    child: Icon(
-                      PhosphorIcons.waveform(PhosphorIconsStyle.fill),
-                      size: 16,
-                      color: AppColors.amber,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Voice Note',
-                            style: Theme.of(context).textTheme.titleMedium),
-                        Text(date,
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
-                    ),
-                  ),
-                  if (widget.note.isSyncedToCloud) ...[
-                    Icon(PhosphorIcons.cloudCheck(PhosphorIconsStyle.fill),
-                        size: 14, color: AppColors.success),
-                    const SizedBox(width: 8),
                   ],
-                  GestureDetector(
-                    onTap: () async {
-                      final selectedDate = await showDatePicker(
-                        context: context,
-                        initialDate: widget.note.reminderAt ?? DateTime.now(),
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime.now().add(const Duration(days: 365)),
-                      );
-                      if (selectedDate == null) return;
-
-                      if (context.mounted) {
-                        final selectedTime = await showTimePicker(
-                          context: context,
-                          initialTime: TimeOfDay.fromDateTime(
-                              widget.note.reminderAt ?? DateTime.now()),
-                        );
-                        if (selectedTime == null) return;
-
-                        final finalDateTime = DateTime(
-                          selectedDate.year,
-                          selectedDate.month,
-                          selectedDate.day,
-                          selectedTime.hour,
-                          selectedTime.minute,
-                        );
-                        widget.onSetReminder(finalDateTime);
-                      }
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: widget.note.reminderAt != null
-                            ? AppColors.amber.withValues(alpha: 0.15)
-                            : Colors.transparent,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        widget.note.reminderAt != null
-                            ? PhosphorIcons.bellRinging(PhosphorIconsStyle.fill)
-                            : PhosphorIcons.bell(PhosphorIconsStyle.light),
-                        size: 18,
-                        color: widget.note.reminderAt != null
-                            ? AppColors.amber
-                            : AppColors.textMuted,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 14),
-
-              // Mini waveform bars (static decorative)
-              SizedBox(
-                height: 28,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: List.generate(40, (i) {
-                    final heights = [
-                      0.3, 0.5, 0.8, 0.4, 0.9, 0.6, 0.3, 0.7, 0.5, 0.9,
-                      0.4, 0.6, 0.8, 0.3, 0.5, 0.7, 0.9, 0.4, 0.6, 0.8,
-                      0.5, 0.3, 0.7, 0.9, 0.4, 0.6, 0.8, 0.5, 0.3, 0.7,
-                      0.9, 0.4, 0.6, 0.3, 0.8, 0.5, 0.7, 0.4, 0.9, 0.6,
-                    ];
-                    final h = heights[i % heights.length];
-                    final filled = i < (_progress * 40).round();
-                    return AnimatedContainer(
-                      duration: const Duration(milliseconds: 100),
-                      margin: const EdgeInsets.symmetric(horizontal: 1),
-                      width: 2.5,
-                      height: (h * 24).clamp(3.0, 24.0),
-                      decoration: BoxDecoration(
-                        color: filled
-                            ? AppColors.amber
-                            : AppColors.textMuted.withValues(alpha: 0.3),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    );
-                  }),
                 ),
-              ),
-              const SizedBox(height: 12),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header row
+                      Row(
+                        children: [
+                          Container(
+                            width: 34,
+                            height: 34,
+                            decoration: BoxDecoration(
+                              color: AppColors.amber.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              PhosphorIconsFill.waveform,
+                              size: 16,
+                              color: AppColors.amber,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Voice Note',
+                                  style: Theme.of(
+                                    context,
+                                  ).textTheme.titleMedium,
+                                ),
+                                Text(
+                                  date,
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (widget.note.isSyncedToCloud) ...[
+                            Icon(
+                              PhosphorIconsFill.cloudCheck,
+                              size: 14,
+                              color: AppColors.success,
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          GestureDetector(
+                            onTap: () async {
+                              final selectedDate = await showDatePicker(
+                                context: context,
+                                initialDate:
+                                    widget.note.reminderAt ?? DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now().add(
+                                  const Duration(days: 365),
+                                ),
+                              );
+                              if (selectedDate == null) return;
 
-              // Controls row
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: _togglePlay,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 150),
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: _isPlaying
-                            ? AppColors.amber
-                            : AppColors.amber.withValues(alpha: 0.15),
-                        shape: BoxShape.circle,
+                              if (context.mounted) {
+                                final selectedTime = await showTimePicker(
+                                  context: context,
+                                  initialTime: TimeOfDay.fromDateTime(
+                                    widget.note.reminderAt ?? DateTime.now(),
+                                  ),
+                                );
+                                if (selectedTime == null) return;
+
+                                final finalDateTime = DateTime(
+                                  selectedDate.year,
+                                  selectedDate.month,
+                                  selectedDate.day,
+                                  selectedTime.hour,
+                                  selectedTime.minute,
+                                );
+                                widget.onSetReminder(finalDateTime);
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: widget.note.reminderAt != null
+                                    ? AppColors.amber.withValues(alpha: 0.15)
+                                    : Colors.transparent,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                widget.note.reminderAt != null
+                                    ? PhosphorIconsFill.bellRinging
+                                    : PhosphorIconsLight.bell,
+                                size: 18,
+                                color: widget.note.reminderAt != null
+                                    ? AppColors.amber
+                                    : AppColors.textMuted,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Icon(
-                        _isPlaying
-                            ? PhosphorIcons.pause(PhosphorIconsStyle.fill)
-                            : PhosphorIcons.play(PhosphorIconsStyle.fill),
-                        size: 16,
-                        color: _isPlaying
-                            ? Colors.white
-                            : AppColors.amber,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    _isPlaying
-                        ? '${_format(_position)} / ${_format(_total)}'
-                        : '${duration}s',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                          fontFeatures: [const FontFeature.tabularFigures()],
+                      const SizedBox(height: 14),
+
+                      // Mini waveform bars (static decorative)
+                      SizedBox(
+                        height: 28,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: List.generate(40, (i) {
+                            final heights = [
+                              0.3,
+                              0.5,
+                              0.8,
+                              0.4,
+                              0.9,
+                              0.6,
+                              0.3,
+                              0.7,
+                              0.5,
+                              0.9,
+                              0.4,
+                              0.6,
+                              0.8,
+                              0.3,
+                              0.5,
+                              0.7,
+                              0.9,
+                              0.4,
+                              0.6,
+                              0.8,
+                              0.5,
+                              0.3,
+                              0.7,
+                              0.9,
+                              0.4,
+                              0.6,
+                              0.8,
+                              0.5,
+                              0.3,
+                              0.7,
+                              0.9,
+                              0.4,
+                              0.6,
+                              0.3,
+                              0.8,
+                              0.5,
+                              0.7,
+                              0.4,
+                              0.9,
+                              0.6,
+                            ];
+                            final h = heights[i % heights.length];
+                            final filled = i < (_progress * 40).round();
+                            return AnimatedContainer(
+                              duration: const Duration(milliseconds: 100),
+                              margin: const EdgeInsets.symmetric(horizontal: 1),
+                              width: 2.5,
+                              height: (h * 24).clamp(3.0, 24.0),
+                              decoration: BoxDecoration(
+                                color: filled
+                                    ? AppColors.amber
+                                    : AppColors.textMuted.withValues(
+                                        alpha: 0.3,
+                                      ),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            );
+                          }),
                         ),
+                      ),
+                      const SizedBox(height: 12),
+
+                      // Controls row
+                      Row(
+                        children: [
+                          GestureDetector(
+                            onTap: _togglePlay,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 150),
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                color: _isPlaying
+                                    ? AppColors.amber
+                                    : AppColors.amber.withValues(alpha: 0.15),
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                _isPlaying
+                                    ? PhosphorIconsFill.pause
+                                    : PhosphorIconsFill.play,
+                                size: 16,
+                                color: _isPlaying
+                                    ? Colors.white
+                                    : AppColors.amber,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            _isPlaying
+                                ? '${_format(_position)} / ${_format(_total)}'
+                                : '${duration}s',
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontFeatures: [
+                                    const FontFeature.tabularFigures(),
+                                  ],
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      )
-          .animate(delay: Duration(milliseconds: 60 * widget.index))
-          .fadeIn()
-          .slideY(begin: 0.06),
+                ),
+              )
+              .animate(delay: Duration(milliseconds: 60 * widget.index))
+              .fadeIn()
+              .slideY(begin: 0.06),
     );
   }
 
@@ -289,7 +344,7 @@ class _AudioNoteCardState extends State<AudioNoteCard> {
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.only(right: 20),
       child: Icon(
-        PhosphorIcons.trash(PhosphorIconsStyle.light),
+        PhosphorIconsLight.trash,
         color: AppColors.error,
         size: 20,
       ),

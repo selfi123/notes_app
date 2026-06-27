@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../../core/theme/app_theme.dart';
@@ -87,15 +87,16 @@ class ContactDetailScreen extends ConsumerWidget {
               ),
               backgroundColor: AppColors.amber,
               elevation: 0,
-              child: Icon(PhosphorIcons.plus(PhosphorIconsStyle.bold),
-                  color: Colors.white),
+              child: Icon(
+                PhosphorIconsBold.plus,
+                color: Colors.white,
+              ),
             ).animate().scale(delay: 300.ms)
           : _buildUpgradeFab(context),
     );
   }
 
-  Widget _buildHeader(
-      BuildContext context, WidgetRef ref, int noteCount) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref, int noteCount) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
       child: Column(
@@ -113,7 +114,7 @@ class ContactDetailScreen extends ConsumerWidget {
                     border: Border.all(color: AppColors.border),
                   ),
                   child: Icon(
-                    PhosphorIcons.caretLeft(PhosphorIconsStyle.light),
+                    PhosphorIconsLight.caretLeft,
                     color: AppColors.textPrimary,
                     size: 18,
                   ),
@@ -131,7 +132,9 @@ class ContactDetailScreen extends ConsumerWidget {
               shape: BoxShape.circle,
               color: AppColors.amber.withValues(alpha: 0.15),
               border: Border.all(
-                  color: AppColors.amber.withValues(alpha: 0.5), width: 1.5),
+                color: AppColors.amber.withValues(alpha: 0.5),
+                width: 1.5,
+              ),
             ),
             child: Center(
               child: Text(
@@ -165,16 +168,16 @@ class ContactDetailScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            PhosphorIcons.notepad(PhosphorIconsStyle.thin),
+            PhosphorIconsThin.notepad,
             size: 64,
             color: AppColors.textMuted,
           ),
           const SizedBox(height: 16),
           Text(
             'No notes yet',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 8),
           Text(
@@ -192,12 +195,14 @@ class ContactDetailScreen extends ConsumerWidget {
       onPressed: () => context.pushNamed('premium'),
       backgroundColor: AppColors.amberDim,
       elevation: 0,
-      icon: Icon(PhosphorIcons.crown(PhosphorIconsStyle.fill),
-          color: AppColors.amber, size: 18),
+      icon: Icon(
+        PhosphorIconsFill.crown,
+        color: AppColors.amber,
+        size: 18,
+      ),
       label: Text(
         'Upgrade',
-        style: TextStyle(
-            color: AppColors.amber, fontWeight: FontWeight.w600),
+        style: TextStyle(color: AppColors.amber, fontWeight: FontWeight.w600),
       ),
     ).animate().scale(delay: 300.ms);
   }

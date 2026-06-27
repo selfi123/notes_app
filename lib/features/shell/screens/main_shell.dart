@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
 
@@ -36,23 +36,23 @@ class MainShell extends StatelessWidget {
           unselectedItemColor: AppColors.textMuted,
           items: [
             BottomNavigationBarItem(
-              icon: Icon(PhosphorIcons.users(PhosphorIconsStyle.light)),
-              activeIcon: Icon(PhosphorIcons.users(PhosphorIconsStyle.fill)),
+              icon: Icon(PhosphorIconsLight.users),
+              activeIcon: Icon(PhosphorIconsFill.users),
               label: 'Contacts',
             ),
             BottomNavigationBarItem(
-              icon: Icon(PhosphorIcons.notebook(PhosphorIconsStyle.light)),
-              activeIcon: Icon(PhosphorIcons.notebook(PhosphorIconsStyle.fill)),
+              icon: Icon(PhosphorIconsLight.notebook),
+              activeIcon: Icon(PhosphorIconsFill.notebook),
               label: 'Notes',
             ),
             BottomNavigationBarItem(
-              icon: Icon(PhosphorIcons.crown(PhosphorIconsStyle.light)),
-              activeIcon: Icon(PhosphorIcons.crown(PhosphorIconsStyle.fill)),
+              icon: Icon(PhosphorIconsLight.crown),
+              activeIcon: Icon(PhosphorIconsFill.crown),
               label: 'Premium',
             ),
             BottomNavigationBarItem(
-              icon: Icon(PhosphorIcons.gear(PhosphorIconsStyle.light)),
-              activeIcon: Icon(PhosphorIcons.gear(PhosphorIconsStyle.fill)),
+              icon: Icon(PhosphorIconsLight.gear),
+              activeIcon: Icon(PhosphorIconsFill.gear),
               label: 'Settings',
             ),
           ],

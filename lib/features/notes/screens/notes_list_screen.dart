@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:go_router/go_router.dart';
@@ -30,8 +30,8 @@ class NotesListScreen extends ConsumerWidget {
               child: notes.isEmpty
                   ? _buildEmptyState(context)
                   : settings.useFolderLayout
-                      ? _buildFolderList(context, notes)
-                      : _buildNotesList(context, ref, notes),
+                  ? _buildFolderList(context, notes)
+                  : _buildNotesList(context, ref, notes),
             ),
           ],
         ),
@@ -52,9 +52,9 @@ class NotesListScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             'All saved notes across your contacts',
-            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyLarge?.copyWith(color: AppColors.textSecondary),
           ).animate().fadeIn(delay: 150.ms),
         ],
       ),
@@ -67,16 +67,16 @@ class NotesListScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            PhosphorIcons.notebook(PhosphorIconsStyle.thin),
+            PhosphorIconsThin.notebook,
             size: 64,
             color: AppColors.textMuted,
           ),
           const SizedBox(height: 16),
           Text(
             'No notes yet',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 8),
           Text(
@@ -90,7 +90,10 @@ class NotesListScreen extends ConsumerWidget {
   }
 
   Widget _buildNotesList(
-      BuildContext context, WidgetRef ref, List<ContactNote> notes) {
+    BuildContext context,
+    WidgetRef ref,
+    List<ContactNote> notes,
+  ) {
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       itemCount: notes.length,
@@ -124,14 +127,17 @@ class NotesListScreen extends ConsumerWidget {
                 padding: const EdgeInsets.only(left: 4, bottom: 6),
                 child: Row(
                   children: [
-                    Icon(PhosphorIcons.user(PhosphorIconsStyle.light),
-                        size: 14, color: AppColors.textMuted),
+                    Icon(
+                      PhosphorIconsLight.user,
+                      size: 14,
+                      color: AppColors.textMuted,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       note.contactName,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.textMuted,
-                          ),
+                        color: AppColors.textMuted,
+                      ),
                     ),
                   ],
                 ),
@@ -178,53 +184,62 @@ class NotesListScreen extends ConsumerWidget {
             pathParameters: {'id': contactId},
             queryParameters: {'name': contactName},
           ),
-          child: Container(
-            margin: const EdgeInsets.only(bottom: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: AppColors.amber.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Center(
-                    child: Text(
-                      initials,
-                      style: const TextStyle(
-                        color: AppColors.amber,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
+          child:
+              Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.border),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(contactName,
-                          style: Theme.of(context).textTheme.titleMedium),
-                      Text(
-                        '$count ${count == 1 ? 'note' : 'notes'}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(PhosphorIcons.caretRight(PhosphorIconsStyle.light),
-                    size: 16, color: AppColors.textMuted),
-              ],
-            ),
-          ).animate().fadeIn(delay: Duration(milliseconds: 50 * index)).slideX(begin: 0.05),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColors.amber.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Center(
+                            child: Text(
+                              initials,
+                              style: const TextStyle(
+                                color: AppColors.amber,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                contactName,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              Text(
+                                '$count ${count == 1 ? 'note' : 'notes'}',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          PhosphorIconsLight.caretRight,
+                          size: 16,
+                          color: AppColors.textMuted,
+                        ),
+                      ],
+                    ),
+                  )
+                  .animate()
+                  .fadeIn(delay: Duration(milliseconds: 50 * index))
+                  .slideX(begin: 0.05),
         );
       },
     );

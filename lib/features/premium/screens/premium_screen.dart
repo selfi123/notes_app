@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:phosphor_flutter/phosphor_flutter.dart';
+import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -26,8 +26,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   }
 
   void _showSnack(String msg) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(msg)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void _signInAndSubscribe(List<ProductDetails> products) async {
@@ -45,7 +44,9 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
       return;
     }
 
-    final targetId = _monthly ? IapService.monthlyProductId : IapService.yearlyProductId;
+    final targetId = _monthly
+        ? IapService.monthlyProductId
+        : IapService.yearlyProductId;
     final product = products.firstWhere(
       (p) => p.id == targetId,
       orElse: () => products.first,
@@ -58,7 +59,10 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   Widget build(BuildContext context) {
     // Check real-time premium status
     final userDoc = ref.watch(userDocProvider).value;
-    final isPremium = userDoc != null && userDoc.exists && userDoc.data()?['isPremium'] == true;
+    final isPremium =
+        userDoc != null &&
+        userDoc.exists &&
+        userDoc.data()?['isPremium'] == true;
 
     if (isPremium || ref.watch(settingsProvider).isActivePremium) {
       return _buildAlreadyPremium(context);
@@ -86,8 +90,11 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: Icon(PhosphorIcons.x(PhosphorIconsStyle.light),
-                        color: AppColors.textPrimary, size: 18),
+                    child: Icon(
+                      PhosphorIconsLight.x,
+                      color: AppColors.textPrimary,
+                      size: 18,
+                    ),
                   ),
                 ),
               ),
@@ -99,25 +106,25 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   children: [
                     // Amber glow orb
                     Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.amberDim.withValues(alpha: 0.3),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.amber.withValues(alpha: 0.25),
-                            blurRadius: 40,
-                            spreadRadius: 10,
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppColors.amberDim.withValues(alpha: 0.3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.amber.withValues(alpha: 0.25),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                      child: Icon(
-                        PhosphorIcons.crown(PhosphorIconsStyle.fill),
-                        size: 36,
-                        color: AppColors.amber,
-                      ),
-                    )
+                          child: Icon(
+                            PhosphorIconsFill.crown,
+                            size: 36,
+                            color: AppColors.amber,
+                          ),
+                        )
                         .animate(onPlay: (c) => c.repeat(reverse: true))
                         .scale(
                           begin: const Offset(1.0, 1.0),
@@ -134,20 +141,21 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'Your notes. Everywhere.',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(color: AppColors.textSecondary),
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                       textAlign: TextAlign.center,
                     ).animate().fadeIn(delay: 150.ms),
                     const SizedBox(height: 36),
 
                     // Features
-                    ..._features.asMap().entries.map((e) => _FeatureRow(
-                          icon: e.value.$1,
-                          label: e.value.$2,
-                          index: e.key,
-                        )),
+                    ..._features.asMap().entries.map(
+                      (e) => _FeatureRow(
+                        icon: e.value.$1,
+                        label: e.value.$2,
+                        index: e.key,
+                      ),
+                    ),
                     const SizedBox(height: 36),
 
                     // Billing toggle
@@ -187,21 +195,27 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                             backgroundColor: AppColors.amber,
                             foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
                           child: Text(
                             _monthly
                                 ? 'Start Premium — ₹99/mo' // Replace with product.price later
                                 : 'Start Premium — ₹799/yr',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelLarge
+                            style: Theme.of(context).textTheme.labelLarge
                                 ?.copyWith(color: Colors.white, fontSize: 15),
                           ),
                         ),
-                        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.amber)),
-                        error: (err, stack) => Text('Error loading products: $err', style: TextStyle(color: Colors.red)),
+                        loading: () => const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.amber,
+                          ),
+                        ),
+                        error: (err, stack) => Text(
+                          'Error loading products: $err',
+                          style: TextStyle(color: Colors.red),
+                        ),
                       ),
                     ).animate().fadeIn(delay: 500.ms),
                     const SizedBox(height: 12),
@@ -230,25 +244,35 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(PhosphorIcons.crown(PhosphorIconsStyle.fill),
-                    size: 64, color: AppColors.amber),
+                Icon(
+                  PhosphorIconsFill.crown,
+                  size: 64,
+                  color: AppColors.amber,
+                ),
                 const SizedBox(height: 16),
-                Text('You\'re Premium!',
-                    style: Theme.of(context).textTheme.displayLarge,
-                    textAlign: TextAlign.center),
+                Text(
+                  'You\'re Premium!',
+                  style: Theme.of(context).textTheme.displayLarge,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 8),
-                Text('Enjoy unlimited notes and cloud sync.',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                    textAlign: TextAlign.center),
+                Text(
+                  'Enjoy unlimited notes and cloud sync.',
+                  style: Theme.of(context).textTheme.bodyLarge,
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 32),
                 FilledButton(
                   onPressed: () => context.pop(),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.amber,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 14),
+                      horizontal: 32,
+                      vertical: 14,
+                    ),
                   ),
                   child: const Text('Back'),
                 ),
@@ -261,10 +285,13 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   }
 
   static final _features = [
-    (PhosphorIcons.infinity(PhosphorIconsStyle.light), 'Unlimited notes'),
-    (PhosphorIcons.cloudArrowUp(PhosphorIconsStyle.light), 'Secure cloud backup'),
-    (PhosphorIcons.devices(PhosphorIconsStyle.light), 'Multi-device access'),
-    (PhosphorIcons.headset(PhosphorIconsStyle.light), 'Priority support'),
+    (PhosphorIconsLight.infinity, 'Unlimited notes'),
+    (
+      PhosphorIconsLight.cloudArrowUp,
+      'Secure cloud backup',
+    ),
+    (PhosphorIconsLight.devices, 'Multi-device access'),
+    (PhosphorIconsLight.headset, 'Priority support'),
   ];
 }
 
@@ -273,30 +300,35 @@ class _FeatureRow extends StatelessWidget {
   final String label;
   final int index;
 
-  const _FeatureRow({required this.icon, required this.label, required this.index});
+  const _FeatureRow({
+    required this.icon,
+    required this.label,
+    required this.index,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
-      child: Row(
-        children: [
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              color: AppColors.amber.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, size: 18, color: AppColors.amber),
-          ),
-          const SizedBox(width: 14),
-          Text(label, style: Theme.of(context).textTheme.titleMedium),
-        ],
-      )
-          .animate(delay: Duration(milliseconds: 200 + 80 * index))
-          .fadeIn()
-          .slideX(begin: -0.08),
+      child:
+          Row(
+                children: [
+                  Container(
+                    width: 38,
+                    height: 38,
+                    decoration: BoxDecoration(
+                      color: AppColors.amber.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(icon, size: 18, color: AppColors.amber),
+                  ),
+                  const SizedBox(width: 14),
+                  Text(label, style: Theme.of(context).textTheme.titleMedium),
+                ],
+              )
+              .animate(delay: Duration(milliseconds: 200 + 80 * index))
+              .fadeIn()
+              .slideX(begin: -0.08),
     );
   }
 }
@@ -325,7 +357,9 @@ class _BillingTab extends StatelessWidget {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.amber.withValues(alpha: 0.12) : Colors.transparent,
+            color: selected
+                ? AppColors.amber.withValues(alpha: 0.12)
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(
@@ -333,37 +367,42 @@ class _BillingTab extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(label,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: selected
-                                ? AppColors.amber
-                                : AppColors.textSecondary,
-                          )),
+                  Text(
+                    label,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: selected
+                          ? AppColors.amber
+                          : AppColors.textSecondary,
+                    ),
+                  ),
                   if (badge != null) ...[
                     const SizedBox(width: 6),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.amber.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Text(badge!,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(color: AppColors.amber)),
+                      child: Text(
+                        badge!,
+                        style: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.copyWith(color: AppColors.amber),
+                      ),
                     ),
                   ],
                 ],
               ),
               const SizedBox(height: 2),
-              Text(price,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: selected
-                            ? AppColors.amberLight
-                            : AppColors.textMuted,
-                      )),
+              Text(
+                price,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: selected ? AppColors.amberLight : AppColors.textMuted,
+                ),
+              ),
             ],
           ),
         ),
