@@ -11,3 +11,4 @@ upload-keystore.jks
 android/app/google-services.json
 .gradle
 .build
+release-keystore.jks
