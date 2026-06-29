@@ -9,9 +9,11 @@ import 'dart:io'; // flutter_ignore: dart_io_import.
 import 'package:google_sign_in_android/google_sign_in_android.dart' as google_sign_in_android;
 import 'package:path_provider_android/path_provider_android.dart' as path_provider_android;
 import 'package:url_launcher_android/url_launcher_android.dart' as url_launcher_android;
+import 'package:webview_flutter_android/webview_flutter_android.dart' as webview_flutter_android;
 import 'package:google_sign_in_ios/google_sign_in_ios.dart' as google_sign_in_ios;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:url_launcher_ios/url_launcher_ios.dart' as url_launcher_ios;
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart' as webview_flutter_wkwebview;
 import 'package:flutter_local_notifications_linux/flutter_local_notifications_linux.dart' as flutter_local_notifications_linux;
 import 'package:path_provider_linux/path_provider_linux.dart' as path_provider_linux;
 import 'package:record_linux/record_linux.dart' as record_linux;
@@ -20,6 +22,7 @@ import 'package:url_launcher_linux/url_launcher_linux.dart' as url_launcher_linu
 import 'package:google_sign_in_ios/google_sign_in_ios.dart' as google_sign_in_ios;
 import 'package:path_provider_foundation/path_provider_foundation.dart' as path_provider_foundation;
 import 'package:url_launcher_macos/url_launcher_macos.dart' as url_launcher_macos;
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart' as webview_flutter_wkwebview;
 import 'package:path_provider_windows/path_provider_windows.dart' as path_provider_windows;
 import 'package:share_plus/share_plus.dart' as share_plus;
 import 'package:url_launcher_windows/url_launcher_windows.dart' as url_launcher_windows;
@@ -57,6 +60,15 @@ class _PluginRegistrant {
         );
       }
 
+      try {
+        webview_flutter_android.AndroidWebViewPlatform.registerWith();
+      } catch (err) {
+        print(
+          '`webview_flutter_android` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
     } else if (Platform.isIOS) {
       try {
         google_sign_in_ios.GoogleSignInIOS.registerWith();
@@ -81,6 +93,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`url_launcher_ios` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        webview_flutter_wkwebview.WebKitWebViewPlatform.registerWith();
+      } catch (err) {
+        print(
+          '`webview_flutter_wkwebview` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }
@@ -155,6 +176,15 @@ class _PluginRegistrant {
       } catch (err) {
         print(
           '`url_launcher_macos` threw an error: $err. '
+          'The app may not function as expected until you remove this plugin from pubspec.yaml'
+        );
+      }
+
+      try {
+        webview_flutter_wkwebview.WebKitWebViewPlatform.registerWith();
+      } catch (err) {
+        print(
+          '`webview_flutter_wkwebview` threw an error: $err. '
           'The app may not function as expected until you remove this plugin from pubspec.yaml'
         );
       }

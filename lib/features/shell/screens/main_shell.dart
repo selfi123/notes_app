@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:phosphoricons_flutter/phosphoricons_flutter.dart';
 
 import '../../../core/theme/app_theme.dart';
+import '../../../core/widgets/banner_ad_widget.dart';
 
 class MainShell extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -26,34 +27,40 @@ class MainShell extends StatelessWidget {
           color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border, width: 1)),
         ),
-        child: BottomNavigationBar(
-          currentIndex: navigationShell.currentIndex,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          onTap: (index) => _onTap(context, index),
-          type: BottomNavigationBarType.fixed,
-          selectedItemColor: AppColors.amber,
-          unselectedItemColor: AppColors.textMuted,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsLight.users),
-              activeIcon: Icon(PhosphorIconsFill.users),
-              label: 'Contacts',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsLight.notebook),
-              activeIcon: Icon(PhosphorIconsFill.notebook),
-              label: 'Notes',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsLight.crown),
-              activeIcon: Icon(PhosphorIconsFill.crown),
-              label: 'Premium',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(PhosphorIconsLight.gear),
-              activeIcon: Icon(PhosphorIconsFill.gear),
-              label: 'Settings',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BannerAdWidget(),
+            BottomNavigationBar(
+              currentIndex: navigationShell.currentIndex,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              onTap: (index) => _onTap(context, index),
+              type: BottomNavigationBarType.fixed,
+              selectedItemColor: AppColors.amber,
+              unselectedItemColor: AppColors.textMuted,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(PhosphorIconsLight.users),
+                  activeIcon: Icon(PhosphorIconsFill.users),
+                  label: 'Contacts',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(PhosphorIconsLight.notebook),
+                  activeIcon: Icon(PhosphorIconsFill.notebook),
+                  label: 'Notes',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(PhosphorIconsLight.crown),
+                  activeIcon: Icon(PhosphorIconsFill.crown),
+                  label: 'Premium',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(PhosphorIconsLight.gear),
+                  activeIcon: Icon(PhosphorIconsFill.gear),
+                  label: 'Settings',
+                ),
+              ],
             ),
           ],
         ),

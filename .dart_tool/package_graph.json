@@ -21,6 +21,7 @@
         "flutter_timezone",
         "go_router",
         "google_fonts",
+        "google_mobile_ads",
         "google_sign_in",
         "hive",
         "hive_flutter",
@@ -225,6 +226,17 @@
       "version": "5.2.1",
       "dependencies": [
         "flutter"
+      ]
+    },
+    {
+      "name": "google_mobile_ads",
+      "version": "5.3.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter",
+        "webview_flutter_android",
+        "webview_flutter_wkwebview"
       ]
     },
     {
@@ -456,7 +468,7 @@
     },
     {
       "name": "meta",
-      "version": "1.18.0",
+      "version": "1.17.0",
       "dependencies": []
     },
     {
@@ -513,7 +525,7 @@
     },
     {
       "name": "test_api",
-      "version": "0.7.11",
+      "version": "0.7.10",
       "dependencies": [
         "async",
         "boolean_selector",
@@ -546,7 +558,7 @@
     },
     {
       "name": "in_app_purchase_android",
-      "version": "0.5.1",
+      "version": "0.5.0",
       "dependencies": [
         "collection",
         "flutter",
@@ -716,7 +728,7 @@
     },
     {
       "name": "url_launcher_android",
-      "version": "6.3.32",
+      "version": "6.3.30",
       "dependencies": [
         "flutter",
         "meta",
@@ -799,6 +811,35 @@
       "dependencies": [
         "flutter",
         "vector_math"
+      ]
+    },
+    {
+      "name": "webview_flutter",
+      "version": "4.14.0",
+      "dependencies": [
+        "flutter",
+        "webview_flutter_android",
+        "webview_flutter_platform_interface",
+        "webview_flutter_wkwebview"
+      ]
+    },
+    {
+      "name": "webview_flutter_wkwebview",
+      "version": "3.25.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "path",
+        "webview_flutter_platform_interface"
+      ]
+    },
+    {
+      "name": "webview_flutter_android",
+      "version": "4.12.0",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "webview_flutter_platform_interface"
       ]
     },
     {
@@ -1161,6 +1202,15 @@
       ]
     },
     {
+      "name": "webview_flutter_platform_interface",
+      "version": "2.15.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
       "name": "xdg_directories",
       "version": "1.1.0",
       "dependencies": [
@@ -1180,7 +1230,7 @@
     },
     {
       "name": "synchronized",
-      "version": "3.4.1",
+      "version": "3.4.0+1",
       "dependencies": []
     },
     {

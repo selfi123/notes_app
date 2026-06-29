@@ -38,7 +38,8 @@ dependencies:
 
   # Cloud (Backend API integration)
   http: ^1.2.0
-  # Payments
+  # Monetization
+  google_mobile_ads: ^5.1.0
 
   # Environment variables
   flutter_dotenv: ^5.2.1
