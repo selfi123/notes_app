@@ -255,7 +255,11 @@ def generate_upload_url():
     try:
         presigned_url = s3_client.generate_presigned_url(
             'put_object',
-            Params={'Bucket': R2_BUCKET_NAME, 'Key': object_key},
+            Params={
+                'Bucket': R2_BUCKET_NAME,
+                'Key': object_key,
+                'ContentType': 'audio/mp4',
+            },
             ExpiresIn=3600,
         )
         return jsonify({'url': presigned_url, 'key': object_key})

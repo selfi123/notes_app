@@ -44,6 +44,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  bool _isSyncing = false;
+
+  Future<void> _syncNotes() async {
+    setState(() => _isSyncing = true);
+    try {
+      await ref.read(notesProvider.notifier).syncUnsyncedNotes();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Backup / Sync completed successfully!')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sync failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSyncing = false);
+      }
+    }
+  }
+
   Future<void> _restorePurchases() async {
     setState(() => _isRestoring = true);
     await IapService.restorePurchases();
@@ -182,13 +206,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   if (settings.isActivePremium)
                     _SettingsTile(
                       icon: PhosphorIconsLight.arrowClockwise,
-                      title: 'Last synced',
-                      trailing: Text(
-                        lastSync,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
+                      title: 'Sync notes now',
+                      trailing: _isSyncing
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(
+                              lastSync,
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                      onTap: _isSyncing ? null : _syncNotes,
                     ),
 
                   const SizedBox(height: 24),

@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "voicecard",
-      "version": "1.0.3+4",
+      "version": "1.0.6+7",
       "dependencies": [
         "animations",
         "audio_session",

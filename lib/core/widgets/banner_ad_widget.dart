@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/ad_service.dart';
 import '../theme/app_theme.dart';
+import '../providers/providers.dart';
 
-class BannerAdWidget extends StatefulWidget {
+class BannerAdWidget extends ConsumerStatefulWidget {
   const BannerAdWidget({super.key});
 
   @override
-  State<BannerAdWidget> createState() => _BannerAdWidgetState();
+  ConsumerState<BannerAdWidget> createState() => _BannerAdWidgetState();
 }
 
-class _BannerAdWidgetState extends State<BannerAdWidget> {
+class _BannerAdWidgetState extends ConsumerState<BannerAdWidget> {
   BannerAd? _bannerAd;
   bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    _loadAd();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && !ref.read(settingsProvider).isActivePremium) {
+        _loadAd();
+      }
+    });
   }
 
   void _loadAd() {
+    if (_bannerAd != null) return;
     _bannerAd = BannerAd(
       adUnitId: AdService.bannerAdUnitId,
       request: const AdRequest(),
@@ -49,6 +56,16 @@ class _BannerAdWidgetState extends State<BannerAdWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isPremium = ref.watch(settingsProvider).isActivePremium;
+    if (isPremium) {
+      if (_bannerAd != null) {
+        _bannerAd!.dispose();
+        _bannerAd = null;
+        _isLoaded = false;
+      }
+      return const SizedBox.shrink();
+    }
+
     if (_isLoaded && _bannerAd != null) {
       return Container(
         width: MediaQuery.of(context).size.width,
