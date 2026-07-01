@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,11 +9,48 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/providers.dart';
 
-class SettingsScreen extends ConsumerWidget {
+import '../../../core/services/iap_service.dart';
+
+class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  bool _isRestoring = false;
+  StreamSubscription<IapStatusUpdate>? _iapSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _iapSubscription = IapService.statusStream.listen(_handleIapStatus);
+  }
+
+  @override
+  void dispose() {
+    _iapSubscription?.cancel();
+    super.dispose();
+  }
+
+  void _handleIapStatus(IapStatusUpdate update) {
+    if (!mounted) return;
+    setState(() => _isRestoring = update.status == IapStatus.pending);
+    if (update.status != IapStatus.pending) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(update.message)),
+      );
+    }
+  }
+
+  Future<void> _restorePurchases() async {
+    setState(() => _isRestoring = true);
+    await IapService.restorePurchases();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
     final notes = ref.watch(notesProvider);
 
@@ -90,6 +129,18 @@ class SettingsScreen extends ConsumerWidget {
                       ),
                     ),
                     onTap: () => context.pushNamed('premium'),
+                  ),
+                  _SettingsTile(
+                    icon: PhosphorIconsLight.arrowClockwise,
+                    title: 'Restore purchases',
+                    trailing: _isRestoring
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : null,
+                    onTap: _isRestoring ? null : _restorePurchases,
                   ),
                   _SettingsTile(
                     icon: PhosphorIconsLight.database,

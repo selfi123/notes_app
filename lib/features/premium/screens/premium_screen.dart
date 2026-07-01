@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -19,42 +21,87 @@ class PremiumScreen extends ConsumerStatefulWidget {
 
 class _PremiumScreenState extends ConsumerState<PremiumScreen> {
   bool _monthly = true;
+  bool _isPurchasing = false;
+  StreamSubscription<IapStatusUpdate>? _iapSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _iapSubscription = IapService.statusStream.listen(_handleIapStatus);
+  }
 
   @override
   void dispose() {
+    _iapSubscription?.cancel();
     super.dispose();
+  }
+
+  void _handleIapStatus(IapStatusUpdate update) {
+    if (!mounted) return;
+
+    setState(() {
+      _isPurchasing = update.status == IapStatus.pending;
+    });
+
+    switch (update.status) {
+      case IapStatus.pending:
+        break;
+      case IapStatus.success:
+      case IapStatus.restored:
+        _showSnack(update.message);
+        break;
+      case IapStatus.error:
+        _showSnack(update.message);
+        break;
+    }
+  }
+
+  String _priceFor(List<ProductDetails> products, String productId, String fallback) {
+    for (final product in products) {
+      if (product.id == productId) {
+        return product.price;
+      }
+    }
+    return fallback;
   }
 
   void _showSnack(String msg) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
-
-  void _signInAndSubscribe(List<ProductDetails> products) async {
-    final user = AuthService.currentUser;
-    if (user == null) {
-      final credential = await AuthService.signInWithGoogle();
-      if (credential == null) {
-        _showSnack('Sign in canceled.');
-        return;
-      }
-    }
-
-    if (products.isEmpty) {
-      _showSnack('Products not available.');
+void _signInAndSubscribe(List<ProductDetails> products) async {
+  final user = AuthService.currentUser;
+  if (user == null) {
+    final credential = await AuthService.signInWithGoogle();
+    if (credential == null) {
+      _showSnack('Sign in canceled.');
       return;
     }
-
-    final targetId = _monthly
-        ? IapService.monthlyProductId
-        : IapService.yearlyProductId;
-    final product = products.firstWhere(
-      (p) => p.id == targetId,
-      orElse: () => products.first,
-    );
-
-    IapService.buyProduct(product);
   }
 
+  if (products.isEmpty) {
+    _showSnack('Products not available.');
+    return;
+  }
+
+  final targetId = _monthly
+      ? IapService.monthlyProductId
+      : IapService.yearlyProductId;
+      
+ProductDetails? product;
+try {
+  product = products.firstWhere((p) => p.id == targetId);
+} catch (_) {
+  product = null;
+}
+
+if (product == null) {
+  _showSnack('Product not found. Please try again.');
+  return;
+}
+
+IapService.buyProduct(product);
+  setState(() => _isPurchasing = true);
+}
   @override
   Widget build(BuildContext context) {
     // Check real-time premium status
@@ -158,66 +205,91 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     ),
                     const SizedBox(height: 36),
 
-                    // Billing toggle
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColors.border),
-                      ),
-                      child: Row(
+                    productsAsync.when(
+                      data: (products) => Column(
                         children: [
-                          _BillingTab(
-                            label: 'Monthly',
-                            price: '₹99 / mo',
-                            selected: _monthly,
-                            onTap: () => setState(() => _monthly = true),
-                          ),
-                          _BillingTab(
-                            label: 'Yearly',
-                            price: '₹799 / yr',
-                            badge: 'Save 33%',
-                            selected: !_monthly,
-                            onTap: () => setState(() => _monthly = false),
-                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: Row(
+                              children: [
+                                _BillingTab(
+                                  label: 'Monthly',
+                                  price: _priceFor(
+                                    products,
+                                    IapService.monthlyProductId,
+                                    '₹99 / mo',
+                                  ),
+                                  selected: _monthly,
+                                  onTap: () => setState(() => _monthly = true),
+                                ),
+                                _BillingTab(
+                                  label: 'Yearly',
+                                  price: _priceFor(
+                                    products,
+                                    IapService.yearlyProductId,
+                                    '₹799 / yr',
+                                  ),
+                                  badge: 'Save 33%',
+                                  selected: !_monthly,
+                                  onTap: () => setState(() => _monthly = false),
+                                ),
+                              ],
+                            ),
+                          ).animate().fadeIn(delay: 400.ms),
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton(
+                              onPressed: _isPurchasing
+                                  ? null
+                                  : () => _signInAndSubscribe(products),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: AppColors.amber,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                              ),
+                              child: _isPurchasing
+                                  ? const SizedBox(
+                                      width: 22,
+                                      height: 22,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : Text(
+                                      _monthly
+                                          ? 'Start Premium — ${_priceFor(products, IapService.monthlyProductId, '₹99/mo')}'
+                                          : 'Start Premium — ${_priceFor(products, IapService.yearlyProductId, '₹799/yr')}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelLarge
+                                          ?.copyWith(
+                                            color: Colors.white,
+                                            fontSize: 15,
+                                          ),
+                                    ),
+                            ),
+                          ).animate().fadeIn(delay: 500.ms),
                         ],
                       ),
-                    ).animate().fadeIn(delay: 400.ms),
-                    const SizedBox(height: 16),
-
-                    // CTA
-                    SizedBox(
-                      width: double.infinity,
-                      child: productsAsync.when(
-                        data: (products) => FilledButton(
-                          onPressed: () => _signInAndSubscribe(products),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AppColors.amber,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                          ),
-                          child: Text(
-                            _monthly
-                                ? 'Start Premium — ₹99/mo' // Replace with product.price later
-                                : 'Start Premium — ₹799/yr',
-                            style: Theme.of(context).textTheme.labelLarge
-                                ?.copyWith(color: Colors.white, fontSize: 15),
-                          ),
-                        ),
-                        loading: () => const Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.amber,
-                          ),
-                        ),
-                        error: (err, stack) => Text(
-                          'Error loading products: $err',
-                          style: TextStyle(color: Colors.red),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.amber,
                         ),
                       ),
-                    ).animate().fadeIn(delay: 500.ms),
+                      error: (err, stack) => Text(
+                        'Error loading products: $err',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'Cancel anytime. No questions asked.',
