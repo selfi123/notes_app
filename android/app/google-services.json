@@ -14,48 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "214063005994-ui2001bs7h0mpg1vgu33bquv4s4is4ft.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC2t-SJn-DiEMu-ZCS1LFIWbqrlmSVoJZI"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "214063005994-ui2001bs7h0mpg1vgu33bquv4s4is4ft.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:214063005994:android:5d3ff280d906d7f5469e53",
-        "android_client_info": {
-          "package_name": "com.voicecard.voicecard"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "214063005994-f2pj1bcoe8ms6cn1niqrelamg55oqe0g.apps.googleusercontent.com",
+          "client_id": "214063005994-554algrdm0k7c0grippg9qhlhn5evrtv.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.voicecard.voicecard",
-            "certificate_hash": "78653b7b36524e845fd2de3b52c38bb186ab36ef"
+            "package_name": "com.krpdev.voicecard",
+            "certificate_hash": "79893b52493ba40dae55c0b183ec8243e2ec3359"
           }
         },
         {
-          "client_id": "214063005994-i2ah61up7fvb7l5q8ov0tan3v1gbl3to.apps.googleusercontent.com",
+          "client_id": "214063005994-jm9o2dka72dk4aktg71365me0tab4voj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.voicecard.voicecard",
-            "certificate_hash": "190197ea3e1acf982c44682f062ff4ce7ec2c7a3"
+            "package_name": "com.krpdev.voicecard",
+            "certificate_hash": "8a4c13954029c9d2162b10c5b4d7505fddb6da7c"
           }
         },
         {
